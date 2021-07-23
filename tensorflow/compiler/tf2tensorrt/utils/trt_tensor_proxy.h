@@ -336,7 +336,7 @@ class ITensorProxy {
     }
     assert(0 && "Unsupported itensor_ type");
   }
-#if IS_TRT_VERSION_GE(5, 0, 0, 0) && !IS_TRT_VERSION_GE(8, 0, 0, 0)
+#if !IS_TRT_VERSION_GE(8, 0, 0, 0)
   float getDynamicRange() const {
     switch (ttype_) {
       case TensorType::kTRT:
@@ -413,7 +413,7 @@ class ITensorProxy {
 
 class ITensorProxyPtr {
  public:
-  ITensorProxyPtr(nullptr_t) : p_(nullptr) {}
+  ITensorProxyPtr(std::nullptr_t) : p_(nullptr) {}
   ITensorProxyPtr(ITensorProxy* p) : p_(p) {}
   ITensorProxyPtr(nvinfer1::ITensor* p) : p_(new ITensorProxy(p)) {}
   ITensorProxyPtr(SimpleITensor* p) : p_(new ITensorProxy(p)) {}

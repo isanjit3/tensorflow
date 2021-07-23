@@ -1,3 +1,59 @@
+# Release 2.7.0
+
+<INSERT SMALL BLURB ABOUT RELEASE FOCUS AREA AND POTENTIAL TOOLCHAIN CHANGES>
+
+## Breaking Changes
+
+*<DOCUMENT BREAKING CHANGES HERE>
+*<THIS SECTION SHOULD CONTAIN API, ABI AND BEHAVIORAL BREAKING CHANGES>
+
+* TF Core:
+    *   `tf.Graph.get_name_scope()` now always returns a string, as documented.
+        Previously, when called within `name_scope("")` or `name_scope(None)`
+        contexts, it returned None; now it returns the empty string.
+
+## Known Caveats
+
+*<CAVEATS REGARDING THE RELEASE (BUT NOT BREAKING CHANGES).>
+*<ADDING/BUMPING DEPENDENCIES SHOULD GO HERE>
+*<KNOWN LACK OF SUPPORT ON SOME PLATFORM, SHOULD GO HERE>
+
+## Major Features and Improvements
+
+*<INSERT MAJOR FEATURE HERE, USING MARKDOWN SYNTAX>
+*<IF RELEASE CONTAINS MULTIPLE FEATURES FROM SAME AREA, GROUP THEM TOGETHER>
+*   TF1 -> TF2 Migration
+    * Introduced the `tf.compat.v1.keras.utils.track_tf1_style_variables`
+      decorator, which enables using large classes of tf1-style variable_scope,
+      `get_variable`, and `compat.v1.layer`-based components from within TF2
+      models running with TF2 behavior enabled.
+
+*  `tf.data`:
+    *   tf.data service now supports auto-sharding. Users specify the sharding
+        policy with `tf.data.experimental.service.ShardingPolicy` enum. It can
+        be one of OFF (equivalent to today's `"parallel_epochs"` mode), DYNAMIC
+        (equivalent to today's `"distributed_epoch"` mode), or one of the static
+        sharding policies: FILE, DATA, FILE_OR_DATA, or HINT (corresponding to
+        values of `tf.data.experimental.AutoShardPolicy`).
+
+        Static sharding (auto-sharding) requires the number of tf.data service
+        workers be fixed. Users need to specify the worker addresses in
+        `tensorflow.data.experimental.DispatcherConfig`.
+
+## Bug Fixes and Other Changes
+
+*<SIMILAR TO ABOVE SECTION, BUT FOR OTHER IMPORTANT CHANGES / BUG FIXES>
+*<IF A CHANGE CLOSES A GITHUB ISSUE, IT SHOULD BE DOCUMENTED HERE>
+*<NOTES SHOULD BE GROUPED PER AREA>
+*   TF Core:
+    *   Added argument `alg` to `tf.random.stateless_*` functions to explicitly select the RNG algorithm.
+
+## Thanks to our Contributors
+
+This release contains contributions from many people at Google, as well as:
+
+<INSERT>, <NAME>, <HERE>, <USING>, <GITHUB>, <HANDLE>
+
 # Release 2.6.0
 
 <INSERT SMALL BLURB ABOUT RELEASE FOCUS AREA AND POTENTIAL TOOLCHAIN CHANGES>
@@ -16,6 +72,13 @@
   * Remove `experimental.nn.dynamic_rnn`, `experimental.nn.TfLiteRNNCell` and
   `experimental.nn.TfLiteLSTMCell` since they're no longer supported. It's
   recommended to just use [keras lstm](https://www.tensorflow.org/api_docs/python/tf/keras/layers/LSTM) instead.
+
+* Keras been split into a separate PIP package (`keras`), and its code has been
+  moved to the GitHub repository[keras-team/keras](http://github.com/keras-team/keras).
+  The API endpoints for `tf.keras` stay unchanged, but are now backed by the
+  `keras` PIP package. The existing code in tensorflow/python/keras is a staled
+  copy and will be removed in future release (2.7). Please remove any imports
+  to `tensorflow.python.keras` and replace them with public tf.keras API instead.
 
 *<DOCUMENT BREAKING CHANGES HERE>
 *<THIS SECTION SHOULD CONTAIN API, ABI AND BEHAVIORAL BREAKING CHANGES>
@@ -104,6 +167,7 @@
     *   Added `tf.config.experimental.reset_memory_stats` to reset the tracked
         peak memory returned by `tf.config.experimental.get_memory_info`.
 *  `tf.data`:
+    *   Added checkpointing support for `tf.data.experimental.save()`.
     *   Added `target_workers` param to `data_service_ops.from_dataset_id` and
         `data_service_ops.distribute`. Users can specify `"AUTO"`, `"ANY"`, or
         `"LOCAL"` (case insensitive). If `"AUTO"`, tf.data service runtime

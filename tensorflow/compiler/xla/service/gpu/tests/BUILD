@@ -128,8 +128,8 @@ tf_cc_test(
 )
 
 tf_cc_test(
-    name = "gpu_all_reduce_scatter_creator_test",
-    srcs = ["gpu_all_reduce_scatter_creator_test.cc"],
+    name = "gpu_reduce_scatter_creator_test",
+    srcs = ["gpu_reduce_scatter_creator_test.cc"],
     deps = [
         "//tensorflow/compiler/xla:util",
         "//tensorflow/compiler/xla:xla_data_proto_cc",
@@ -139,7 +139,7 @@ tf_cc_test(
         "//tensorflow/compiler/xla/service:hlo_parser",
         "//tensorflow/compiler/xla/service:hlo_pass_pipeline",
         "//tensorflow/compiler/xla/service:hlo_verifier",
-        "//tensorflow/compiler/xla/service/gpu:gpu_all_reduce_scatter_creator",
+        "//tensorflow/compiler/xla/service/gpu:gpu_reduce_scatter_creator",
         "//tensorflow/compiler/xla/tests:hlo_test_base",
         "//tensorflow/compiler/xla/tests:xla_internal_test_main",
         "//tensorflow/core:test",
@@ -259,6 +259,33 @@ tf_cc_test(
     name = "reduction_layout_normalizer_test",
     srcs = [
         "reduction_layout_normalizer_test.cc",
+    ],
+    tags = tf_cuda_tests_tags(),
+    deps = [
+        ":gpu_codegen_test",
+        "//tensorflow/compiler/xla:debug_options_flags",
+        "//tensorflow/compiler/xla:statusor",
+        "//tensorflow/compiler/xla/service:gpu_plugin",
+        "//tensorflow/compiler/xla/service:hlo",
+        "//tensorflow/compiler/xla/service:hlo_module_config",
+        "//tensorflow/compiler/xla/service:hlo_parser",
+        "//tensorflow/compiler/xla/service/gpu:gemm_rewriter",
+        "//tensorflow/compiler/xla/service/gpu:gpu_executable",
+        "//tensorflow/compiler/xla/tests:filecheck",
+        "//tensorflow/compiler/xla/tests:hlo_test_base",
+        "//tensorflow/compiler/xla/tests:llvm_irgen_test_base",
+        "//tensorflow/core:lib",
+        "//tensorflow/core:test",
+        "//tensorflow/core:test_main",
+        "//tensorflow/stream_executor/lib",
+        "@com_google_absl//absl/memory",
+    ],
+)
+
+tf_cc_test(
+    name = "reduction_joiner_test",
+    srcs = [
+        "reduction_joiner_test.cc",
     ],
     tags = tf_cuda_tests_tags(),
     deps = [
@@ -487,7 +514,7 @@ tf_cc_test(
 tf_cc_test(
     name = "gpu_kernel_tiling_test",
     srcs = ["gpu_kernel_tiling_test.cc"],
-    tags = tf_cuda_tests_tags(),
+    tags = ["no_rocm"] + tf_cuda_tests_tags(),
     deps = [
         ":gpu_codegen_test",
         "//tensorflow/compiler/xla/service:hlo",
